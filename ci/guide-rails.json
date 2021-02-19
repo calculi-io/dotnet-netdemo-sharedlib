@@ -31,7 +31,6 @@
 				"exit_actions": {
 					"default": {
 						"fetch_logs": true,
-						"notifications": [],
 						"code_analysis": {
 							"publish": true,
 							"properties": null
@@ -123,7 +122,6 @@
 		"exit_actions": {
 			"default": {
 				"fetch_logs": true,
-				"notifications": [],
 				"code_analysis": {
 					"publish": true,
 					"properties": null
@@ -133,8 +131,8 @@
 		},
 		"default_properties": [
 			{
-				"name": "consul.tag",
-				"value": "((application.shortsha))",
+				"name": "additional_properties_file",
+				"value": "local-sonar-project.properties",
 				"type": "string"
 			},
 			{
@@ -143,8 +141,8 @@
 				"type": "string"
 			},
 			{
-				"name": "additional_properties_file",
-				"value": "local-sonar-project.properties",
+				"name": "consul.tag",
+				"value": "((application.shortsha))",
 				"type": "string"
 			}
 		],
