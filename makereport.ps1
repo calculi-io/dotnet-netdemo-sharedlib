@@ -1,0 +1,2 @@
+packages\ReportGenerator.4.1.5\tools\net47\ReportGenerator.exe -reports:TestResults\coverage.xml -reporttypes:Cobertura -targetdir:.
+Rename-Item -Path Cobertura.xml -NewName coverage.xml -Force -ErrorAction SilentlyContinue

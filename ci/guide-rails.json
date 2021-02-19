@@ -1,0 +1,245 @@
+{
+	"metadata": {
+		"version": 2
+	},
+	"application": {
+		"name": "netdemo-sharedlib",
+		"language": "DOTNET",
+		"artifact_store": {
+			"type": "s3",
+			"repositories": [
+				{
+					"category": "rc-packaging",
+					"bucket": "guide-rails-calculi-rc"
+				},
+				{
+					"category": "final-packaging",
+					"bucket": "guide-rails-calculi-final"
+				},
+				{
+					"category": "logs",
+					"bucket": "guide-rails-calculi-logs"
+				}
+			]
+		}
+	},
+	"pipeline": {
+		"segments": [
+			{
+				"name": "Build",
+				"segment_type": "build",
+				"exit_actions": {
+					"default": {
+						"fetch_logs": true,
+						"notifications": [
+							{
+								"type": "slack",
+								"send_notification": true,
+								"to": [
+									"#gr-pipeline"
+								],
+								"message": "Segment Status"
+							}
+						],
+						"code_analysis": {
+							"publish": true,
+							"properties": null
+						},
+						"delete_instances": true
+					},
+					"on_success": {
+						"notifications": [
+							{
+								"type": "slack",
+								"send_notification": true,
+								"message": "Test message"
+							}
+						],
+						"code_analysis": null
+					},
+					"on_failure": {
+						"notifications": [
+							{
+								"type": "slack",
+								"send_notification": true,
+								"message": "Segment Failure"
+							}
+						],
+						"code_analysis": null
+					},
+					"on_abort": {
+						"notifications": [
+							{
+								"type": "slack",
+								"send_notification": true,
+								"message": "Segment Aborted"
+							}
+						],
+						"code_analysis": null
+					}
+				},
+				"deployment_strategy": {
+					"canary_watch_time": "",
+					"update_watch_time": "",
+					"serial": false
+				},
+				"application_init": {},
+				"packages": [
+					{
+						"name": "((application.name))",
+						"downloads": [],
+						"files": [
+							"SharedLib/*.nupkg"
+						]
+					}
+				],
+				"instance_tags": [
+					{
+						"name": "application.name",
+						"value": "((application.name))"
+					}
+				],
+				"post_deployment_actions": {
+					"instances": null,
+					"loadbalanced": false,
+					"loadbalancer": {
+						"TargetGroupName": "",
+						"TargetGroupPort": 0,
+						"TargetGroupProtocol": "",
+						"TargetType": "",
+						"VPCID": "",
+						"HealthCheckEnabled": false,
+						"HealthCheckPort": "",
+						"UnhealthyThresholdCount": 0
+					}
+				},
+				"cache_info": {},
+				"tasks": [
+					{
+						"name": "netdemo-sharedlib",
+						"steps": [
+							{
+								"name": "Env",
+								"definition": "Env",
+								"command": "Get-Item -Path Env:*",
+								"properties": null
+							},
+							{
+								"name": "Restore",
+								"definition": "Restore with nuget",
+								"command": "nuget restore",
+								"properties": null
+							},
+							{
+								"name": "Build",
+								"definition": "Build debug files",
+								"command": "msbuild /t:Rebuild /p:Configuration=Debug",
+								"properties": null
+							},
+							{
+								"name": "Unit test and Coverage",
+								"definition": "Unit test and coverage",
+								"command": ".\\test.ps1 ",
+								"properties": null
+							},
+							{
+								"name": "Make Cobertura Report",
+								"definition": "convert report to cobertura format",
+								"command": ".\\makereport.ps1",
+								"properties": null
+							},
+							{
+								"name": "NuGet Publish",
+								"definition": "Publish NuGet Package",
+								"command": "cd SharedLib\n.\\package.ps1",
+								"properties": null
+							}
+						]
+					}
+				]
+			}
+		],
+		"exit_actions": {
+			"default": {
+				"fetch_logs": true,
+				"notifications": [
+					{
+						"type": "slack",
+						"send_notification": true,
+						"to": [
+							"#gr-pipeline"
+						],
+						"message": "Segment Status"
+					}
+				],
+				"code_analysis": {
+					"publish": true,
+					"properties": null
+				},
+				"delete_instances": true
+			},
+			"on_success": {
+				"notifications": [
+					{
+						"type": "slack",
+						"send_notification": true,
+						"message": "Test message"
+					}
+				],
+				"code_analysis": {
+					"properties": null
+				}
+			},
+			"on_failure": {
+				"notifications": [
+					{
+						"type": "slack",
+						"send_notification": true,
+						"message": "Segment Failure"
+					}
+				],
+				"code_analysis": {
+					"properties": null
+				}
+			},
+			"on_abort": {
+				"notifications": [
+					{
+						"type": "slack",
+						"send_notification": true,
+						"message": "Segment Aborted"
+					}
+				],
+				"code_analysis": {
+					"properties": null
+				}
+			}
+		},
+		"default_properties": [
+			{
+				"name": "consul.tag",
+				"value": "((application.shortsha))",
+				"type": "string"
+			},
+			{
+				"name": "consul.servicename",
+				"value": "((application.name))",
+				"type": "string"
+			},
+			{
+				"name": "additional_properties_file",
+				"value": "local-sonar-project.properties",
+				"type": "string"
+			}
+		],
+		"deployment_files": [],
+		"application_init": {},
+		"process": {
+			"init": {}
+		},
+		"releases": []
+	},
+	"organization": {
+		"orgname": "Onboarding-Demo"
+	}
+}

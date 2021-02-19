@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>SharedLib</id>
+    <version>1.0.10</version>
+    <title>Shared Libaray</title>
+    <authors>Adam</authors>
+    <owners>Adam</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Sample Shared Library</description>
+    <releaseNotes>Initial Package</releaseNotes>
+    <copyright>Copyright Calculi Corp. 2019</copyright>
+    <tags>shared library registry</tags>
+  </metadata>
+</package>
